@@ -6,6 +6,8 @@ services:
     image: postgres
     environment:
       - POSTGRES_PASSWORD="${PASSWORD_BD}"
+      - POSTGRES_USER="${USER_BD}"
+      - POSTGRES_DB="${NAME_BD}"
       - PGDATA=/var/lib/postgresql/data/pgdata
 
     volumes:
