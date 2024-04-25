@@ -25,3 +25,6 @@ class User(AbstractUser):
         verbose_name = 'пользователь'
         verbose_name_plural = 'пользователи'
         ordering = ('email',)
+
+    def __str__(self):
+        return self.email
