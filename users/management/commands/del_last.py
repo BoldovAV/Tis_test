@@ -6,4 +6,3 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options) -> None:
         User.objects.last().delete()
-

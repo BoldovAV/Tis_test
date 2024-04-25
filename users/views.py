@@ -34,7 +34,8 @@ class UserViewSet(viewsets.ModelViewSet):
 
         send_mail(
             subject='Мои поздравления',
-            message=f'Ты один из нас, бобро пожаловать. \nПройди по ссылке для активации аккаунта '
+            message=f'Ты один из нас, бобро пожаловать. \nПройди по ссылке'
+                    f' для активации аккаунта '
                     f'{verify_url}',
             from_email=settings.EMAIL_HOST_USER,
             recipient_list=[new_user.email]
@@ -51,10 +52,12 @@ class VerifyEmailView(View):
         if user.verification_token == token:
             user.is_active = True
             user.save()
-            messages.success(request, 'Ваш аккаунт успешно активирован. Вы можете войти.')
+            messages.success(request, 'Ваш аккаунт успешно активирован.'
+                                      ' Вы можете войти.')
             return redirect('users:user')
         else:
-            messages.error(request, 'Неверная ссылка для верификации. Пожалуйста, свяжитесь с администратором.')
+            messages.error(request, 'Неверная ссылка для верификации.'
+                                    ' Пожалуйста, свяжитесь с администратором.')
             return redirect('users:user')
 
 
