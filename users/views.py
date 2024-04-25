@@ -9,7 +9,8 @@ from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.views import View
 from rest_framework import viewsets
-
+from rest_framework.generics import get_object_or_404
+from rest_framework.views import APIView
 
 from users.models import User
 from users.serliazers import UserSerializer
@@ -55,3 +56,20 @@ class VerifyEmailView(View):
         else:
             messages.error(request, 'Неверная ссылка для верификации. Пожалуйста, свяжитесь с администратором.')
             return redirect('users:user')
+
+
+class UserPasswordDropAPIView(APIView):
+    """APIView для сброса пароля"""
+    def post(self, *args, **kwargs):
+        user_id = kwargs.get('pk')
+        user = get_object_or_404(User, id=user_id)
+        new_password = User.objects.make_random_password()
+        send_mail(
+            subject='Новый пароль',
+            message=f'Не теряй больше\n'
+                    f'{new_password}',
+            from_email=settings.EMAIL_HOST_USER,
+            recipient_list=[user.email]
+        )
+        user.set_password(new_password)
+        user.save()
