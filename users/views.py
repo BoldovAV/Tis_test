@@ -76,3 +76,4 @@ class UserPasswordDropAPIView(APIView):
         )
         user.set_password(new_password)
         user.save()
+        return redirect('users:user')
