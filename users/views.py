@@ -42,8 +42,22 @@ class UserViewSet(viewsets.ModelViewSet):
     def perform_update(self, serializer):
         upd_user = serializer.save()
         password = self.request.data.get('password')
+        new_email = self.request.data.get('email')
         if password:
             upd_user.set_password(password)
+        if new_email and new_email != upd_user.email:
+            verify_url = self.request.build_absolute_uri(reverse_lazy(
+                'users:verify_email', kwargs={'pk': upd_user.pk,
+                                              'token': upd_user.verification_token})
+            )
+            upd_user.is_active = False
+            send_mail(
+                subject='Новая почта',
+                message=f'Была изменена почта на эту, пройди по ссылке и подтверди\n'
+                        f'{verify_url}',
+                from_email=settings.EMAIL_HOST_USER,
+                recipient_list=[new_email]
+            )
         upd_user.save()
 
 
@@ -66,6 +80,7 @@ class VerifyEmailAPIView(APIView):
 
 class UserPasswordDropAPIView(APIView):
     """APIView для сброса пароля"""
+
     def post(self, *args, **kwargs):
         user_id = kwargs.get('pk')
         user = get_object_or_404(User, id=user_id)
