@@ -5,9 +5,7 @@ from django.contrib import messages
 
 from django.core.mail import send_mail
 from django.http import Http404
-from django.shortcuts import redirect
 from django.urls import reverse_lazy
-from django.views import View
 from rest_framework import viewsets
 from rest_framework.generics import get_object_or_404
 from rest_framework.views import APIView
