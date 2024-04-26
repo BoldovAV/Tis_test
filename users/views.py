@@ -41,8 +41,15 @@ class UserViewSet(viewsets.ModelViewSet):
             recipient_list=[new_user.email]
         )
 
+    def perform_update(self, serializer):
+        upd_user = serializer.save()
+        password = self.request.data.get('password')
+        if password:
+            upd_user.set_password(password)
+        upd_user.save()
 
-class VerifyEmailView(View):
+
+class VerifyEmailAPIView(APIView):
     def get(self, request, pk, token):
         try:
             user = User.objects.get(pk=pk)
@@ -54,11 +61,9 @@ class VerifyEmailView(View):
             user.save()
             messages.success(request, 'Ваш аккаунт успешно активирован.'
                                       ' Вы можете войти.')
-            return redirect('users:user')
         else:
             messages.error(request, 'Неверная ссылка для верификации.'
                                     ' Пожалуйста, свяжитесь с администратором.')
-            return redirect('users:user')
 
 
 class UserPasswordDropAPIView(APIView):
@@ -76,4 +81,3 @@ class UserPasswordDropAPIView(APIView):
         )
         user.set_password(new_password)
         user.save()
-        return redirect('users:user')
